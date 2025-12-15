@@ -1,0 +1,5 @@
+import trigger_import_test
+import import_default_behave
+from import_default_behave import B
+# 无论import 多少次，py文件的全局范围和class的def定义外
+# 范围都只执行一次，对单个py解释器来说这些代码执行是单例模式

@@ -1,0 +1,12 @@
+attrs==25.4.0
+cattrs==25.3.0
+docstring-to-markdown==0.17
+importlib_metadata==8.7.0
+jedi==0.19.2
+jedi-language-server==0.46.0
+lsprotocol==2025.0.0
+parso==0.8.4
+pygls==2.0.0
+readline==6.2.4.1
+typing_extensions==4.15.0
+zipp==3.23.0

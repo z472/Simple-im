@@ -1,0 +1,25 @@
+import tornado.web
+from django.conf import settings
+from django.core.handlers.base import BaseHandler
+from tornado import autoreload
+from handlers import AsyncDjangoHandler
+
+def create_tornado_application(*, autoreload: bool = False) -> tornado.web.Application:
+    django_handler = BaseHandler()
+    django_handler.load_middleware()
+
+    urls = (
+        r"/json/events",
+        r"/api/v1/events",
+        r"/api/v1/events/internal",
+        r"/api/internal/notify_tornado",
+        r"/api/internal/web_reload_clients",
+    )
+
+    return tornado.web.Application(
+        [(url, AsyncDjangoHandler, dict(django_handler=django_handler)) for url in urls],
+        debug=settings.DEBUG,
+        autoreload=autoreload,
+        # Disable Tornado's own request logging, since we have our own
+        log_function=lambda x: None,
+    )

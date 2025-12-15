@@ -1,0 +1,6 @@
+.vscode/
+.vscode_use_pylance/
+.manual_tests/
+__pycache__/
+zulip-main/
+*.code-workspace
