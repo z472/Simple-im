@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build1:
 
     runs-on: ubuntu-latest
     strategy:
@@ -24,7 +24,7 @@ jobs:
     - name: Set up Python version
       uses: actions/setup-python@v3
       with:
-        python-version: "3.11"
+        python-version: ${{ matrix.python-version }}
     - name: Cache pip whl-tar.gz
       uses: actions/cache@v4
       with:
