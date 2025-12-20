@@ -1,0 +1,5 @@
+[flake8]
+# 设置为与 Black 默认一致的 88 字符
+max-line-length = 88
+# 忽略一些与 Black 冲突或不兼容的特定错误码
+extend-ignore = E203, W503

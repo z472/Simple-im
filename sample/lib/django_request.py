@@ -9,10 +9,10 @@ class BaseNotes(ABC):
         # ?
         if not hasattr(cls, "__notes_map"):
             cls.__notes_map = weakref.WeakKeyDictionary()
-    
+
     @classmethod
-    def get_notes(cls, key:any):
-        # why unuse 'not in' 
+    def get_notes(cls, key: any):
+        # why unuse 'not in'
         try:
             return cls.__notes_map[key]
         except KeyError:
@@ -20,5 +20,4 @@ class BaseNotes(ABC):
             return cls.__notes_map[key]
 
 
-class RequestNotes(BaseNotes):
-    ...
+class RequestNotes(BaseNotes): ...

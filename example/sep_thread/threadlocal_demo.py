@@ -1,5 +1,6 @@
 import threading
-#当时可能不知道这个api，这就是它的意思，线程隔离
+
+# 当时可能不知道这个api，这就是它的意思，线程隔离
 # 核心作用正好是线程安全的反面：它创建的是线程隔离
 # 的变量，而不是线程共享的变量。线程共享的变量才会
 # 出现线程安全问题。
@@ -10,6 +11,7 @@ import threading
 # 类似的是 在不同协程中调用ContextVars()的命名一样，但
 # 其实是隔离的不同内容。
 threadLocal = threading.local()
+
 
 class Executor(threading.Thread):
     def __init__(self, name):
@@ -24,8 +26,9 @@ class Executor(threading.Thread):
         self.print_message()
 
     def print_message(self):
-        print(self.name, ': ', vars(threadLocal))
-   
+        print(self.name, ": ", vars(threadLocal))
+
+
 A = Executor("A")
 A.start()
 B = Executor("B")

@@ -5,7 +5,9 @@
 # 如果版本太新，jedi即使是最新版本，他俩一起用也会出错，我目前是2025.2.0
 # 版本正好完美联动最新的jedi 0.19.2版本。
 # import distance
-import jedi 
+import jedi
+
 print(jedi.__version__)
 import sys
+
 print(sys.path)

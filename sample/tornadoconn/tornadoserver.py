@@ -1,14 +1,17 @@
-import asyncio,tornado
+import asyncio, tornado
 from .views import UserForTest
 
 
 async def main():
     from .handlers import MainPageHandler
-    default_user = UserForTest(id=0,name='John0',age=42)
+
+    default_user = UserForTest(id=0, name="John0", age=42)
     # URL regex -> handler's http method. dict -> their initialize()
-    application = tornado.web.Application([
-        (r"/user/(.*)", MainPageHandler, dict(userid=default_user.id)),
-    ])
+    application = tornado.web.Application(
+        [
+            (r"/user/(.*)", MainPageHandler, dict(userid=default_user.id)),
+        ]
+    )
     server = tornado.httpserver.HTTPServer(application, xheaders=True)
     addr = "127.0.0.1"
     server.listen(8888)
@@ -18,6 +21,7 @@ async def main():
     # 写法，故tornado server对于所在的ioloop线程可以说是阻塞的。
     # 阻塞等同于不归还程序控制权
     await asyncio.Event().wait()
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     asyncio.run(main())

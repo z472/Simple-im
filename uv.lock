@@ -135,23 +135,14 @@ name = "distance"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "annotated-types" },
-    { name = "asgiref" },
-    { name = "certifi" },
-    { name = "charset-normalizer" },
     { name = "django" },
-    { name = "idna" },
     { name = "orjson" },
     { name = "pika" },
     { name = "pydantic" },
     { name = "pydantic-core" },
     { name = "pyyaml" },
     { name = "requests" },
-    { name = "sqlparse" },
     { name = "tornado" },
-    { name = "typing-extensions" },
-    { name = "tzdata" },
-    { name = "urllib3" },
 ]
 
 [package.dev-dependencies]
@@ -165,23 +156,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "annotated-types", specifier = "==0.7.0" },
-    { name = "asgiref", specifier = "==3.8.1" },
-    { name = "certifi", specifier = "==2024.8.30" },
-    { name = "charset-normalizer", specifier = "==3.3.2" },
     { name = "django", specifier = "==5.0.7" },
-    { name = "idna", specifier = "==3.8" },
     { name = "orjson", specifier = "==3.10.10" },
     { name = "pika", specifier = "==1.3.2" },
     { name = "pydantic", specifier = "==2.9.0" },
     { name = "pydantic-core", specifier = "==2.23.2" },
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "requests", specifier = "==2.32.3" },
-    { name = "sqlparse", specifier = "==0.5.1" },
     { name = "tornado", specifier = "==6.4.1" },
-    { name = "typing-extensions", specifier = "==4.12.2" },
-    { name = "tzdata", specifier = "==2024.1" },
-    { name = "urllib3", specifier = "==2.2.2" },
 ]
 
 [package.metadata.requires-dev]

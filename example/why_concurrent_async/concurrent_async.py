@@ -1,6 +1,6 @@
-from concurrent.futures import ThreadPoolExecutor,\
-ProcessPoolExecutor
-'''ThreadPoolExecutor类源码速写：
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+"""ThreadPoolExecutor类源码速写：
     该类我愿称为多消费者线程的“协调者”
     单生产者(执行器类的self._work_queue，queue.SimpleQueue() )——多消费者work线程
         通过线程信号量来同步空闲的线程数量；
@@ -41,4 +41,4 @@ ProcessPoolExecutor
 
     # 3. fork 后（父进程）：释放锁
     #    恢复正常的线程执行
-'''
+"""

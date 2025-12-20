@@ -1,21 +1,21 @@
 from collections import deque
-from typing import Any,MutableMapping
-import random,time,tornado
+from typing import Any, MutableMapping
+import random, time, tornado
 
 HEARTBEAT_MIN_FREQ_SECS = 45
 
+
 class ClientDescriptor:
-    def __init__( 
+    def __init__(
         self,
         user_profile_id: int,
         realm_id: int,
         event_queue: "EventQueue",
-        ):
+    ):
         self.user_profile_id = user_profile_id
         self.realm_id = realm_id
         self.event_queue = event_queue
-        
-    
+
     def connect_handler(self, handler_id: int, client_name: str) -> None:
         self.current_handler_id = handler_id
         self.current_client_name = client_name
@@ -23,13 +23,14 @@ class ClientDescriptor:
         self.last_connection_time = time.time()
 
         def timeout_callback() -> None:
-            self._timeout_handle = None                        
+            self._timeout_handle = None
             self.add_event(dict(type="heartbeat"))
 
         ioloop = tornado.ioloop.IOLoop.current()
         interval = HEARTBEAT_MIN_FREQ_SECS + random.randint(0, 10)
         self._timeout_handle = ioloop.call_later(interval, timeout_callback)
-        
+
+
 class EventQueue:
     def __init__(self, id: str) -> None:
         self.queue: deque[dict[str, Any]] = deque()
@@ -37,19 +38,20 @@ class EventQueue:
         # will only be None for migration from old versions
         self.newest_pruned_id: int | None = -1
         self.id: str = id
-    
+
+
 def fetch_events(
     queue_id: str | None,
     last_event_id: int | None,
     user_profile_id: int,
     handler_id: int,
     new_queue_data: MutableMapping[str, Any] | None,
-)-> dict[str, Any]:
-    try:        
+) -> dict[str, Any]:
+    try:
         if queue_id is None:
             client = allocate_client_descriptor(new_queue_data)
-            queue_id = client.event_queue.id                        
-        else:            
+            queue_id = client.event_queue.id
+        else:
             # last_event_id made when (browser)client got the last event.
             if last_event_id is None:
                 raise RuntimeError("Missing 'last_event_id' argument")
@@ -73,7 +75,9 @@ def fetch_events(
             extra_log_data = "[{}/{}]".format(queue_id, len(response["events"]))
             if was_connected:
                 extra_log_data += " [was connected]"
-            return dict(type="response", response=response, extra_log_data=extra_log_data)            
+            return dict(
+                type="response", response=response, extra_log_data=extra_log_data
+            )
     except RuntimeError as e:
         return dict(type="error", exception=e)
 
@@ -81,7 +85,6 @@ def fetch_events(
     return dict(type="async")
 
 
-        
 # maps queue ids to client descriptors
 clients: dict[str, ClientDescriptor] = {}
 # maps user id to list of client descriptors

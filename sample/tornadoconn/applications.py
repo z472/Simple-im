@@ -4,6 +4,7 @@ from django.core.handlers.base import BaseHandler
 from tornado import autoreload
 from handlers import AsyncDjangoHandler
 
+
 def create_tornado_application(*, autoreload: bool = False) -> tornado.web.Application:
     django_handler = BaseHandler()
     django_handler.load_middleware()
@@ -17,7 +18,10 @@ def create_tornado_application(*, autoreload: bool = False) -> tornado.web.Appli
     )
 
     return tornado.web.Application(
-        [(url, AsyncDjangoHandler, dict(django_handler=django_handler)) for url in urls],
+        [
+            (url, AsyncDjangoHandler, dict(django_handler=django_handler))
+            for url in urls
+        ],
         debug=settings.DEBUG,
         autoreload=autoreload,
         # Disable Tornado's own request logging, since we have our own

@@ -4,8 +4,10 @@ from pika import adapters
 from pika.adapters.tornado_connection import TornadoConnection
 from pika.exchange_type import ExchangeType
 
-LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
-              '-35s %(lineno) -5d: %(message)s')
+LOG_FORMAT = (
+    "%(levelname) -10s %(asctime)s %(name) -30s %(funcName) "
+    "-35s %(lineno) -5d: %(message)s"
+)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -22,10 +24,11 @@ class ExampleConsumer(object):
     commands that were issued and that should surface in the output as well.
 
     """
-    EXCHANGE = 'message'
+
+    EXCHANGE = "message"
     EXCHANGE_TYPE = ExchangeType.topic
-    QUEUE = 'text'
-    ROUTING_KEY = 'example.text'
+    QUEUE = "text"
+    ROUTING_KEY = "example.text"
 
     def __init__(self, amqp_url):
         """Create a new instance of the consumer class, passing in the AMQP
@@ -48,7 +51,7 @@ class ExampleConsumer(object):
         :rtype: pika.SelectConnection
 
         """
-        LOGGER.info('Connecting to %s', self._url)
+        LOGGER.info("Connecting to %s", self._url)
         return TornadoConnection(
             pika.URLParameters(self._url),
             self.on_connection_open,
@@ -56,7 +59,7 @@ class ExampleConsumer(object):
 
     def close_connection(self):
         """This method closes the connection to RabbitMQ."""
-        LOGGER.info('Closing connection')
+        LOGGER.info("Closing connection")
         self._connection.close()
 
     def add_on_connection_close_callback(self):
@@ -64,7 +67,7 @@ class ExampleConsumer(object):
         when RabbitMQ closes the connection to the publisher unexpectedly.
 
         """
-        LOGGER.info('Adding connection close callback')
+        LOGGER.info("Adding connection close callback")
         self._connection.add_on_close_callback(self.on_connection_closed)
 
     def on_connection_closed(self, connection, reason):
@@ -81,8 +84,7 @@ class ExampleConsumer(object):
         if self._closing:
             self._connection.ioloop.stop()
         else:
-            LOGGER.warning('Connection closed, reopening in 5 seconds: %s',
-                        reason)
+            LOGGER.warning("Connection closed, reopening in 5 seconds: %s", reason)
             self._connection.ioloop.call_later(5, self.reconnect)
 
     def on_connection_open(self, unused_connection):
@@ -93,7 +95,7 @@ class ExampleConsumer(object):
         :param pika.SelectConnection _unused_connection: The connection
 
         """
-        LOGGER.info('Connection opened')
+        LOGGER.info("Connection opened")
         self.add_on_connection_close_callback()
         self.open_channel()
 
@@ -112,7 +114,7 @@ class ExampleConsumer(object):
         RabbitMQ unexpectedly closes the channel.
 
         """
-        LOGGER.info('Adding channel close callback')
+        LOGGER.info("Adding channel close callback")
         self._channel.add_on_close_callback(self.on_channel_closed)
 
     def on_channel_closed(self, channel, reason):
@@ -126,7 +128,7 @@ class ExampleConsumer(object):
         :param Exception reason: why the channel was closed
 
         """
-        LOGGER.warning('Channel %i was closed: %s', channel, reason)
+        LOGGER.warning("Channel %i was closed: %s", channel, reason)
         self._connection.close()
 
     def on_channel_open(self, channel):
@@ -138,7 +140,7 @@ class ExampleConsumer(object):
         :param pika.channel.Channel channel: The channel object
 
         """
-        LOGGER.info('Channel opened')
+        LOGGER.info("Channel opened")
         self._channel = channel
         self.add_on_channel_close_callback()
         self.setup_exchange(self.EXCHANGE)
@@ -151,7 +153,7 @@ class ExampleConsumer(object):
         :param str|unicode exchange_name: The name of the exchange to declare
 
         """
-        LOGGER.info('Declaring exchange %s', exchange_name)
+        LOGGER.info("Declaring exchange %s", exchange_name)
         self._channel.exchange_declare(
             callback=self.on_exchange_declareok,
             exchange=exchange_name,
@@ -165,7 +167,7 @@ class ExampleConsumer(object):
         :param pika.Frame.Method unused_frame: Exchange.DeclareOk response frame
 
         """
-        LOGGER.info('Exchange declared')
+        LOGGER.info("Exchange declared")
         self.setup_queue(self.QUEUE)
 
     def setup_queue(self, queue_name):
@@ -176,7 +178,7 @@ class ExampleConsumer(object):
         :param str|unicode queue_name: The name of the queue to declare.
 
         """
-        LOGGER.info('Declaring queue %s', queue_name)
+        LOGGER.info("Declaring queue %s", queue_name)
         self._channel.queue_declare(
             queue=queue_name,
             callback=self.on_queue_declareok,
@@ -192,8 +194,9 @@ class ExampleConsumer(object):
         :param pika.frame.Method method_frame: The Queue.DeclareOk frame
 
         """
-        LOGGER.info('Binding %s to %s with %s',
-                    self.EXCHANGE, self.QUEUE, self.ROUTING_KEY)
+        LOGGER.info(
+            "Binding %s to %s with %s", self.EXCHANGE, self.QUEUE, self.ROUTING_KEY
+        )
         self._channel.queue_bind(
             queue=self.QUEUE,
             exchange=self.EXCHANGE,
@@ -207,7 +210,7 @@ class ExampleConsumer(object):
         on_consumer_cancelled will be invoked by pika.
 
         """
-        LOGGER.info('Adding consumer cancellation callback')
+        LOGGER.info("Adding consumer cancellation callback")
         self._channel.add_on_cancel_callback(self.on_consumer_cancelled)
 
     def on_consumer_cancelled(self, method_frame):
@@ -217,8 +220,7 @@ class ExampleConsumer(object):
         :param pika.frame.Method method_frame: The Basic.Cancel frame
 
         """
-        LOGGER.info('Consumer was cancelled remotely, shutting down: %r',
-                    method_frame)
+        LOGGER.info("Consumer was cancelled remotely, shutting down: %r", method_frame)
         if self._channel:
             self._channel.close()
 
@@ -229,7 +231,7 @@ class ExampleConsumer(object):
         :param int delivery_tag: The delivery tag from the Basic.Deliver frame
 
         """
-        LOGGER.info('Acknowledging message %s', delivery_tag)
+        LOGGER.info("Acknowledging message %s", delivery_tag)
         self._channel.basic_ack(delivery_tag)
 
     def on_message(self, unused_channel, basic_deliver, properties, body):
@@ -246,8 +248,12 @@ class ExampleConsumer(object):
         :param bytes body: The message body
 
         """
-        LOGGER.info('Received message # %s from %s: %s',
-                    basic_deliver.delivery_tag, properties.app_id, body)
+        LOGGER.info(
+            "Received message # %s from %s: %s",
+            basic_deliver.delivery_tag,
+            properties.app_id,
+            body,
+        )
         self.acknowledge_message(basic_deliver.delivery_tag)
 
     def on_cancelok(self, unused_frame):
@@ -259,7 +265,7 @@ class ExampleConsumer(object):
         :param pika.frame.Method unused_frame: The Basic.CancelOk frame
 
         """
-        LOGGER.info('RabbitMQ acknowledged the cancellation of the consumer')
+        LOGGER.info("RabbitMQ acknowledged the cancellation of the consumer")
         self.close_channel()
 
     def stop_consuming(self):
@@ -268,7 +274,7 @@ class ExampleConsumer(object):
 
         """
         if self._channel:
-            LOGGER.info('Sending a Basic.Cancel RPC command to RabbitMQ')
+            LOGGER.info("Sending a Basic.Cancel RPC command to RabbitMQ")
             self._channel.basic_cancel(self.on_cancelok, self._consumer_tag)
 
     def start_consuming(self):
@@ -281,7 +287,7 @@ class ExampleConsumer(object):
         will invoke when a message is fully received.
 
         """
-        LOGGER.info('Issuing consumer related RPC commands')
+        LOGGER.info("Issuing consumer related RPC commands")
         self.add_on_cancel_callback()
         self._consumer_tag = self._channel.basic_consume(
             on_message_callback=self.on_message,
@@ -296,7 +302,7 @@ class ExampleConsumer(object):
         :param pika.frame.Method unused_frame: The Queue.BindOk response frame
 
         """
-        LOGGER.info('Queue bound')
+        LOGGER.info("Queue bound")
         self.start_consuming()
 
     def close_channel(self):
@@ -304,7 +310,7 @@ class ExampleConsumer(object):
         Channel.Close RPC command.
 
         """
-        LOGGER.info('Closing the channel')
+        LOGGER.info("Closing the channel")
         self._channel.close()
 
     def open_channel(self):
@@ -313,7 +319,7 @@ class ExampleConsumer(object):
         on_channel_open callback will be invoked by pika.
 
         """
-        LOGGER.info('Creating a new channel')
+        LOGGER.info("Creating a new channel")
         self._connection.channel(on_open_callback=self.on_channel_open)
 
     def run(self):
@@ -335,21 +341,21 @@ class ExampleConsumer(object):
         the IOLoop will be buffered but not processed.
 
         """
-        LOGGER.info('Stopping')
+        LOGGER.info("Stopping")
         self._closing = True
         self.stop_consuming()
         self._connection.ioloop.start()
-        LOGGER.info('Stopped')
+        LOGGER.info("Stopped")
 
 
 def main():
     logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-    example = ExampleConsumer('amqp://guest:guest@localhost:5672/%2F')
+    example = ExampleConsumer("amqp://guest:guest@localhost:5672/%2F")
     try:
         example.run()
     except KeyboardInterrupt:
         example.stop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -10,9 +10,10 @@ class TornadoAdapter(HTTPAdapter):
             total=3,
             backoff_factor=0.1,
             status_forcelist=[502, 503, 504],
-            allowed_methods={'POST'},
+            allowed_methods={"POST"},
         )
         super().__init__(max_retries=retries)
+
 
 def requests_client() -> Session:
     c = Session()
@@ -20,4 +21,3 @@ def requests_client() -> Session:
     for scheme in ("https://", "http://"):
         c.mount(scheme, adapter)
     return c
-
