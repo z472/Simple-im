@@ -1,4 +1,5 @@
-import asyncio, tornado
+import asyncio
+import tornado
 from .views import UserForTest
 
 
@@ -13,7 +14,7 @@ async def main():
         ]
     )
     server = tornado.httpserver.HTTPServer(application, xheaders=True)
-    addr = "127.0.0.1"
+    # addr = "127.0.0.1"
     server.listen(8888)
     # 服务器非阻塞是针对多个请求IO上；你觉得服务器在ioLoop里阻塞，可能
     # 下面的代码event一直不被set()导致的，wait会阻塞，除非外部有人设置

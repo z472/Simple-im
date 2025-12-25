@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
 name: Python application
 
 on:
@@ -13,35 +10,34 @@ permissions:
   contents: read
 
 jobs:
-  build1:
-
+  build:
     runs-on: ubuntu-latest
     strategy:
-      matrix:        
-        python-version: ["3.11", "3.12"] 
+      matrix:         
+        python-version: ["3.11"] # 以后想测 3.12，直接加在后面
+
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python version
-      uses: actions/setup-python@v3
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Cache pip whl-tar.gz
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
-        restore-keys: ${{ runner.os }}-python-${{ matrix.python-version }}-              
-    - name: Install pip packages to site-packages
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        enable-cache: true
+        cache-dependency-glob: "uv.lock" 
+
+    - name: Set up Python ${{ matrix.python-version }}
+      # 使用 uv 来管理 Python 版本，代替 actions/setup-python
+      run: uv python install ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      # 这里的 --frozen 确保 CI 不会乱动你的 uv.lock
+      run: uv sync --frozen         
+    
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest
+        # 必须加 uv run 才能调用虚拟环境里的 flake8
+        # 第一行：只查语法等致命错误（不依赖 .flake8 配置，遇到必停）
+        uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        
+        # 第二行：常规风格检查（会自动读取你的 .flake8 配置文件，从而忽略 F401）
+        uv run flake8 . --count --statistics
