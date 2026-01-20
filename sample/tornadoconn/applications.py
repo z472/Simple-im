@@ -1,7 +1,6 @@
 import tornado.web
 from django.conf import settings
 from django.core.handlers.base import BaseHandler
-from tornado import autoreload
 from handlers import AsyncDjangoHandler
 
 

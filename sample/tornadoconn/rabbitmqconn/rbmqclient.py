@@ -77,13 +77,13 @@ class RbmqClient:
 
     def publish(self, queue_name: str, body: Mapping[str, Any]) -> None:
         def do_publish(channel: Channel) -> None:
-            body = orjson.dumps(body)
+            payload = orjson.dumps(body)
             channel.basic_publish(
                 exchange="",
                 routing_key=queue_name,
                 # 2 = durable, 1 = transient
                 properties=pika.BasicProperties(delivery_mode=2),
-                body=body,
+                body=payload,
             )
 
         self.control_queue(queue_name, do_publish)

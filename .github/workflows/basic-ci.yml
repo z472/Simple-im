@@ -1,38 +1,30 @@
 name: Python application
-
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
 permissions:
   contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:         
-        python-version: ["3.11"] # 以后想测 3.12，直接加在后面
-
+        python-version: ["3.11"] 
     steps:
     - uses: actions/checkout@v4
-
     - name: Install uv
       uses: astral-sh/setup-uv@v5
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock" 
-
     - name: Set up Python ${{ matrix.python-version }}
       # 使用 uv 来管理 Python 版本，代替 actions/setup-python
       run: uv python install ${{ matrix.python-version }}
-
     - name: Install dependencies
       # 这里的 --frozen 确保 CI 不会乱动你的 uv.lock
-      run: uv sync --frozen         
-    
+      run: uv sync --frozen             
     - name: Lint with flake8
       run: |
         # 必须加 uv run 才能调用虚拟环境里的 flake8

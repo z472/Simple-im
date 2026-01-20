@@ -3,7 +3,7 @@ import tornado
 from .views import UserForTest
 
 
-async def main():
+async def start_tserver():
     from .handlers import MainPageHandler
 
     default_user = UserForTest(id=0, name="John0", age=42)
@@ -25,4 +25,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(start_tserver())
